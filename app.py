@@ -2,12 +2,12 @@ import streamlit as st
 import vectorbt as vbt
 from datetime import datetime
 
+# Streamlit UI
 st.title('Crypto Statistical Arbitrage Backtest')
 
-asset_1 = st.text_input('First Asset (e.g., BTC/USDT)', 'BTC/USDT')
-asset_2 = st.text_input('Second Asset (e.g., ETH/USDT)', 'ETH/USDT')
-exchange = st.text_input('Exchange (e.g., binance)', 'binance')
-timeframe = st.selectbox('Timeframe', ['1h', '4h', '1d'])
+asset_1 = st.text_input('First Asset (e.g., BTC-USD)', 'BTC-USD')
+asset_2 = st.text_input('Second Asset (e.g., ETH-USD)', 'ETH-USD')
+timeframe = st.selectbox('Timeframe', ['1h', '4h', '1D'])
 start_date = st.date_input('Start Date')
 end_date = st.date_input('End Date')
 
@@ -16,16 +16,12 @@ end_date = datetime.combine(end_date, datetime.min.time())
 
 if st.button('Run Backtest'):
     try:
-        data_1 = vbt.CCXTData.download(
-            asset_1, exchange=exchange, timeframe=timeframe, start=start_date, end=end_date
-        ).get('Close')
-
-        data_2 = vbt.CCXTData.download(
-            asset_2, exchange=exchange, timeframe=timeframe, start=start_date, end=end_date
-        ).get('Close')
+        data_1 = vbt.YFData.download(asset_1, start=start_date, end=end_date)['Close']
+        data_2 = vbt.YFData.download(asset_2, start=start_date, end=end_date)['Close']
 
         spread = data_1 - data_2
         zscore = spread.vbt.zscore()
+
         long_entries = zscore < -1
         short_entries = zscore > 1
         exits = abs(zscore) < 0.5
@@ -38,9 +34,9 @@ if st.button('Run Backtest'):
         fig = portfolio.plot()
         st.plotly_chart(fig)
 
-        st.subheader('Performance metrics')
+        st.subheader('Performance Metrics')
         st.write(portfolio.stats())
-        
+
         st.subheader('Trades Stats')
         st.write(portfolio.trades.stats())
 
