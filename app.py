@@ -1,4 +1,3 @@
-!pip install vectorbt datetime
 import streamlit as st
 import vectorbt as vbt
 from datetime import datetime
