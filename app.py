@@ -2,12 +2,11 @@ import streamlit as st
 import vectorbt as vbt
 from datetime import datetime
 
-# Streamlit UI
 st.title('Crypto Statistical Arbitrage Backtest')
 
 asset_1 = st.text_input('First Asset (e.g., BTC-USD)', 'BTC-USD')
 asset_2 = st.text_input('Second Asset (e.g., ETH-USD)', 'ETH-USD')
-timeframe = st.selectbox('Timeframe', ['1h', '4h', '1D'])
+timeframe = st.selectbox('Timeframe', ['1d', '1wk', '1mo'])
 start_date = st.date_input('Start Date')
 end_date = st.date_input('End Date')
 
@@ -16,8 +15,13 @@ end_date = datetime.combine(end_date, datetime.min.time())
 
 if st.button('Run Backtest'):
     try:
-        data_1 = vbt.YFData.download(asset_1, start=start_date, end=end_date)['Close']
-        data_2 = vbt.YFData.download(asset_2, start=start_date, end=end_date)['Close']
+        data_1 = vbt.YFData.download(
+            asset_1, start=start_date, end=end_date
+        ).get('Close')
+
+        data_2 = vbt.YFData.download(
+            asset_2, start=start_date, end=end_date
+        ).get('Close')
 
         spread = data_1 - data_2
         zscore = spread.vbt.zscore()
@@ -44,8 +48,7 @@ if st.button('Run Backtest'):
         st.write(portfolio.positions.records_readable)
 
         st.subheader('Drawdowns')
-        drawdowns = portfolio.drawdowns.records_readable
-        st.write(drawdowns)
+        st.write(portfolio.drawdowns.records_readable)
 
         st.subheader('Drawdown Plot')
         drawdown_fig = portfolio.drawdowns.plot()
