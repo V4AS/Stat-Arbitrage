@@ -1,3 +1,4 @@
 streamlit
 vectorbt
 datetime
+ccxt 
