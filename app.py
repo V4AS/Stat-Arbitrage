@@ -6,7 +6,7 @@ st.title('Crypto Statistical Arbitrage Backtest')
 
 asset_1 = st.text_input('First Asset (e.g., BTC-USD)', 'BTC-USD')
 asset_2 = st.text_input('Second Asset (e.g., ETH-USD)', 'ETH-USD')
-timeframe = st.selectbox('Timeframe', ['1d', '1wk', '1mo'])
+timeframe = st.selectbox('Timeframe', ['1d'])
 start_date = st.date_input('Start Date')
 end_date = st.date_input('End Date')
 
